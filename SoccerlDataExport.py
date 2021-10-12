@@ -1,11 +1,14 @@
 import csv
+from numpy import nan
+import requests
 import os
 import re
 import random
 import matplotlib.pyplot as plt
 import pandas as pd
+
 def WrithListToCsvFile(linkedList,filename="new_csv_file",Season=""):
-    newpath = r'C:\Users\USER\NewDoc' 
+    newpath = r'C:\Users\USER\NewDoc\Bundesliga' 
     if(re.match(r"\d{4,4}_\d{4,4}",Season)):
          newpath+=str.format(r'\{}',Season)    
     if not os.path.exists(newpath):
@@ -16,19 +19,29 @@ def WrithListToCsvFile(linkedList,filename="new_csv_file",Season=""):
       
     write.writerow(linkedList[0])
     write.writerows(linkedList[1:])
-def exportTeamsLeague(path):
-    with open(path,'r') as file:  
-     reader=csv.reader(file)
-     BondesligaTeams18_19=[]  
+def openCsvFile(path):
+     with open(path,'r') as file: 
+      file.seek(0) 
+      reader=csv.reader(file)
+      return list(reader)
+
+def exportTeamsLeague(reader):      
+     LeugeTeams=[]  
+     i=0
      for line in reader:
-      if(line[2] not in BondesligaTeams18_19):
-        BondesligaTeams18_19.append(line[2])
-     BondesligaTeams18_19.remove('HomeTeam')
-     BondesligaTeams18_19.sort()
-     return BondesligaTeams18_19
-def VictoryParcent(path):
- with open(path,'r') as file:  
-    reader=csv.reader(file)
+      if(line[2] not in LeugeTeams):           
+          if(i==0):
+              i=1               
+              continue
+          else:
+               LeugeTeams.append(line[2])
+    
+     for x in LeugeTeams:
+         if(type(x) != str):
+            LeugeTeams.remove(x)
+     LeugeTeams.sort()
+     return LeugeTeams
+def VictoryParcent(reader):
     HowWines=[]
     for line in reader:
        HowWines.append(line[6])
@@ -41,11 +54,8 @@ def VictoryParcent(path):
         elif(a=='A'):sumAwayWins+=1
         else:sumDrew+=1
     return [sumHomeWins/len(HowWines),sumAwayWins/len(HowWines),sumDrew/len(HowWines)]
-def HomeAwayDataExport(path):
- with open(path,'r') as file:
-    BondesligaTeams18_19=exportTeamsLeague(path)
-    reader=csv.reader(file)   
-    file.seek(0)
+def HomeAwayDataExport(reader):
+    BondesligaTeams18_19=exportTeamsLeague(reader)  
     analyze=[]
     analyze.append(["Team","Home Wins","Away Wins","Drew","Home Losses","Away Losess","Home Goals","Away Goals","goals against H","goals against A"])
     for team in BondesligaTeams18_19:
@@ -68,12 +78,10 @@ def HomeAwayDataExport(path):
     return analyze
 def takeSecond(elem):
     return elem[1]
-def buildTableFromCsv(path,gamesNumber=38):
-   with open(path,'r') as file:  
-    reader=csv.reader(file)
-    BondesligaTeams18_19=exportTeamsLeague(path) 
+def buildTableFromCsv(reader,gamesNumber=38):
+    leagueTeams=exportTeamsLeague(reader) 
     table=[]    
-    for team in BondesligaTeams18_19:
+    for team in leagueTeams:
        table.append([team,0,0,0,0,0,0,0,0,0,0])
     for line in reader:
         for lis in table:
@@ -107,14 +115,39 @@ def buildTableFromCsv(path,gamesNumber=38):
     table.sort(key=takeSecond,reverse=True)
     table.insert(0,["Team","Points","wins","Losess","Drew","Goals Scored","Goals Against","Goal Difference","Goals per game","Goals Against per game","Goals per point"])
     return table
-def WriteAllSeason():
-  a_directory = r"C:\Users\USER\data\data"
-  a=2009
-  for filename in os.listdir(a_directory):
-    filepath = os.path.join(a_directory, filename)
-    WrithListToCsvFile(buildTableFromCsv(filepath,34),str.format("GermanLeageTable-{}_{}",a%100,(a+1)%100),str.format("{}_{}",a,a+1))
-    a+=1
+def WriteAllBundesligaSeason(): 
+  a=22
+  for filename in range(15):
+    b=a-1
+    url=str.format("https://www.football-data.co.uk/mmz4281/{}{}/D1.csv",b,a)
+    data = pd.read_csv(url)
+    if(data.columns[2]=="Time"):
+            data.pop('Time')
+    Data=list(data.values)
+    WrithListToCsvFile(buildTableFromCsv(Data,gamesNumber=34),str.format("GermanLeageTable-{}_{}",a,b),str.format("20{}_20{}",a,str(b).zfill(2)))
+    WrithListToCsvFile(HomeAwayDataExport(Data),str.format("GermanHomeAwayStats-{}_{}",a,b),str.format("20{}_20{}",a,str(b).zfill(2)))
+    a-=1
+
+
 #WrithListToCsvFile(HomeAwayDataExport(r"C:\Users\USER\Downloads\D1 (1).csv"),str.format("GermanLeageHomeAwayStats-{}_{}",20,21),str.format("{}_{}",2020,2021))
+def write_All_primerLegaueData():   
+    url = 'https://www.football-data.co.uk/mmz4281/1011/E0.csv'
+    a=11
+    b=12
+    for x in range(10):
+         data = pd.read_csv(url)
+         if(data.columns[2]=="Time"):
+            data.pop('Time')
+         Data=list(data.values)
+         WrithListToCsvFile(HomeAwayDataExport(Data),str.format("EngelandLeageHomeAwayData-20{}_20{}",a,b),str.format("{}_{}",a,b))      
+         WrithListToCsvFile(buildTableFromCsv(Data,gamesNumber=38),str.format("EngelandLeageTable-20{}_20{}",a,b),str.format("{}_{}",a,b))               
+         a+=1
+         b+=1
+         url= str.format('https://www.football-data.co.uk/mmz4281/{}{}/E0.csv',a,b)
+
+
+
+
 def buildNeuralNetwork(exeptedOutput,**inputs):
     weights=[]
     for i in range(0,len(input)):
@@ -138,33 +171,7 @@ def ALinearRegression(X,Y):
    A+=X[i]*(Y[i]-aveY)
    B+=X[i]*(X[i]-aveX)
   return [float(A)/B,aveY-aveX*float(A)/B]
-with open(r"C:\Users\USER\Downloads\D1 (2).csv","r")  as f:
-    R_HomeFauls_HomeBet=-0.045477074114620236
-    reader=csv.reader(f)
-    L=[]
-    P=[]
-    i=0
-    for line in reader:
-          if(i!=0):
-           L.append(float(line[5]))
-           P.append(float(line[23]))
-          i+=1
-   # L.remove("HF")
-    #P.remove("B365H")
-    print(ALinearRegression(L,P))
-    plt.plot(P, L, color = 'g', linestyle = 'dashed',
-         marker = 'o',label = "BetRelationGoals")
-    u=0
-    for x in range(0,len(L)-1):
-     u+=P[x]
-    print(u/len(P))
-plt.xticks(rotation = 25)
-plt.xlabel('Bet')
-plt.ylabel('Goals')
-plt.title('BetRelationGoals', fontsize = 20)
-plt.grid()
-plt.legend()
-plt.show()
+WriteAllBundesligaSeason()
 
 
 
