@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 def WrithListToCsvFile(linkedList,filename="new_csv_file",Season=""):
-    newpath = r'C:\Users\USER\NewDoc\Bundesliga' 
+    newpath = r'C:\Users\USER\NewDoc\La_Liga' 
     if(re.match(r"\d{4,4}_\d{4,4}",Season)):
          newpath+=str.format(r'\{}',Season)    
     if not os.path.exists(newpath):
@@ -127,7 +127,18 @@ def WriteAllBundesligaSeason():
     WrithListToCsvFile(buildTableFromCsv(Data,gamesNumber=34),str.format("GermanLeageTable-{}_{}",a,b),str.format("20{}_20{}",a,str(b).zfill(2)))
     WrithListToCsvFile(HomeAwayDataExport(Data),str.format("GermanHomeAwayStats-{}_{}",a,b),str.format("20{}_20{}",a,str(b).zfill(2)))
     a-=1
-
+def WriteAllLa_LigaSeason():
+    a=22
+    for i in range(15):
+     b=a-1
+     url=str.format("https://www.football-data.co.uk/mmz4281/{}{}/SP1.csv",str(b).zfill(2),str(a).zfill(2))
+     data = pd.read_csv(url)
+     if(data.columns[2]=="Time"):
+            data.pop('Time')
+     Data=list(data.values)
+     WrithListToCsvFile(buildTableFromCsv(Data),str.format("SpainLeageTable-{}_{}",a,b),str.format("20{}_20{}",str(a).zfill(2),str(b).zfill(2)))
+     WrithListToCsvFile(HomeAwayDataExport(Data),str.format("SpainHomeAwayStats-{}_{}",a,b),str.format("20{}_20{}",str(a).zfill(2),str(b).zfill(2)))
+     a-=1
 
 #WrithListToCsvFile(HomeAwayDataExport(r"C:\Users\USER\Downloads\D1 (1).csv"),str.format("GermanLeageHomeAwayStats-{}_{}",20,21),str.format("{}_{}",2020,2021))
 def write_All_primerLegaueData():   
@@ -171,7 +182,7 @@ def ALinearRegression(X,Y):
    A+=X[i]*(Y[i]-aveY)
    B+=X[i]*(X[i]-aveX)
   return [float(A)/B,aveY-aveX*float(A)/B]
-WriteAllBundesligaSeason()
+WriteAllLa_LigaSeason()
 
 
 
