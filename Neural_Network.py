@@ -68,6 +68,7 @@ def main(inputs=[]):
    for i in range(0,):
       for j in range(n):
           network[j].feed_forward()
+main()
         
 
 
