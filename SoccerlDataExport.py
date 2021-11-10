@@ -1,5 +1,8 @@
 import csv
+<<<<<<< HEAD
 from numpy import nan
+=======
+>>>>>>> 0f28a2f (null)
 import requests
 import os
 import re
@@ -23,12 +26,17 @@ def openCsvFile(path):
      with open(path,'r') as file: 
       file.seek(0) 
       reader=csv.reader(file)
+<<<<<<< HEAD
       return list(reader)
+=======
+      return reader
+>>>>>>> 0f28a2f (null)
 
 def exportTeamsLeague(reader):      
      LeugeTeams=[]  
      i=0
      for line in reader:
+<<<<<<< HEAD
       if(line[2] not in LeugeTeams):           
           if(i==0):
               i=1               
@@ -39,6 +47,14 @@ def exportTeamsLeague(reader):
      for x in LeugeTeams:
          if(type(x) != str):
             LeugeTeams.remove(x)
+=======
+      if(line[2] not in LeugeTeams):
+          if(i==0):
+               i=1
+               continue
+          else:
+               LeugeTeams.append(line[2])
+>>>>>>> 0f28a2f (null)
      LeugeTeams.sort()
      return LeugeTeams
 def VictoryParcent(reader):
@@ -79,7 +95,11 @@ def HomeAwayDataExport(reader):
 def takeSecond(elem):
     return elem[1]
 def buildTableFromCsv(reader,gamesNumber=38):
+<<<<<<< HEAD
     leagueTeams=exportTeamsLeague(reader) 
+=======
+    BondesligaTeams18_19=exportTeamsLeague(reader) 
+>>>>>>> 0f28a2f (null)
     table=[]    
     for team in leagueTeams:
        table.append([team,0,0,0,0,0,0,0,0,0,0])
@@ -115,6 +135,7 @@ def buildTableFromCsv(reader,gamesNumber=38):
     table.sort(key=takeSecond,reverse=True)
     table.insert(0,["Team","Points","wins","Losess","Drew","Goals Scored","Goals Against","Goal Difference","Goals per game","Goals Against per game","Goals per point"])
     return table
+<<<<<<< HEAD
 def WriteAllBundesligaSeason(): 
   a=22
   for filename in range(15):
@@ -155,6 +176,25 @@ def write_All_primerLegaueData():
          a+=1
          b+=1
          url= str.format('https://www.football-data.co.uk/mmz4281/{}{}/E0.csv',a,b)
+=======
+def WriteAllSeason():
+  a_directory = r"C:\Users\USER\data\data"
+  a=2009
+  for filename in os.listdir(a_directory):
+    filepath = os.path.join(a_directory, filename)
+    WrithListToCsvFile(buildTableFromCsv(openCsvFile(path=filepath),gamesNumber=34),str.format("GermanLeageTable-{}_{}",a%100,(a+1)%100),str.format("{}_{}",a,a+1))
+    a+=1
+#WrithListToCsvFile(HomeAwayDataExport(r"C:\Users\USER\Downloads\D1 (1).csv"),str.format("GermanLeageHomeAwayStats-{}_{}",20,21),str.format("{}_{}",2020,2021))
+def write_All_primerLegaueData():   
+    url = 'https://www.football-data.co.uk/mmz4281/1011/E0.csv'
+    r = requests.get(url)
+    text = r.iter_lines()   
+    a=1112
+    for x in range(10):
+         WrithListToCsvFile(buildTableFromCsv(text,gamesNumber=38),str.format("EngelandLeageTable-{}_{}",a%100,(a+1)),str.format("{}_{}",a,a+1))
+         a+=101
+         url=str.format('https://www.football-data.co.uk/mmz4281/{}/E0.csv',a)
+>>>>>>> 0f28a2f (null)
 
 
 
@@ -182,7 +222,11 @@ def ALinearRegression(X,Y):
    A+=X[i]*(Y[i]-aveY)
    B+=X[i]*(X[i]-aveX)
   return [float(A)/B,aveY-aveX*float(A)/B]
+<<<<<<< HEAD
 WriteAllLa_LigaSeason()
+=======
+#write_All_primerLegaueData()
+>>>>>>> 0f28a2f (null)
 
 
 
