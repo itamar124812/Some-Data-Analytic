@@ -45,13 +45,13 @@ def main(inputs=[]):
    try:
        n=int(n)
    except:
-        print("wrong output. You must enter an intager bigger then zero.")
+        print("wrong input. You must enter an intager bigger then zero.")
    if(type(n) != int or n<=0):
-       print("wrong output. You must enter an intager bigger then zero.")
+       print("wrong input. You must enter an intager bigger then zero.")
        exit(1)
    if(not(inputs)):
       size=input("Enter the size of the input layer")
-      for i in range(size):
+      for i in range(int(size)):
         try:
          inputs.append(float(input(str.format("Enter number in index {}",i))))
         except:
@@ -61,7 +61,7 @@ def main(inputs=[]):
    prelayer=inputs
    for i in range(1,n):
       p=input(str.format("Please enter the number of neurons in layer number {} .",i))
-      l=layer(p,prelayer)
+      l=layer(int(p),prelayer)
       network.append(l)
       prelayer=l
 
@@ -70,6 +70,8 @@ def main(inputs=[]):
           network[j].feed_forward()
 main()
         
+
+
 
 
 

@@ -183,6 +183,7 @@ def ALinearRegression(X,Y):
    B+=X[i]*(X[i]-aveX)
   return [float(A)/B,aveY-aveX*float(A)/B]
 WriteAllLa_LigaSeason()
+WriteAllBundesligaSeason()
 
 
 
