@@ -78,6 +78,7 @@ def HomeAwayDataExport(reader):
     return analyze
 def takeSecond(elem):
     return elem[1]
+    
 def buildTableFromCsv(reader,gamesNumber=38):
     leagueTeams=exportTeamsLeague(reader) 
     table=[]    
@@ -155,14 +156,14 @@ def write_All_primerLegaueData():
          a+=1
          b+=1
          url= str.format('https://www.football-data.co.uk/mmz4281/{}{}/E0.csv',a,b)
+def write_all_leages():
+    write_All_primerLegaueData()
+    WriteAllLa_LigaSeason()
+    WriteAllBundesligaSeason()
 
 
 
 
-def buildNeuralNetwork(exeptedOutput,**inputs):
-    weights=[]
-    for i in range(0,len(input)):
-      weights.append(random.random())
     
 def R(X,Y):
   aveX=sum(X)/len(X) 
@@ -182,7 +183,8 @@ def ALinearRegression(X,Y):
    A+=X[i]*(Y[i]-aveY)
    B+=X[i]*(X[i]-aveX)
   return [float(A)/B,aveY-aveX*float(A)/B]
-WriteAllLa_LigaSeason()
+
+
 
 
 
